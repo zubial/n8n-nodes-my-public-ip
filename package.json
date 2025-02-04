@@ -1,9 +1,9 @@
 {
   "name": "n8n-nodes-my-public-ip",
-  "version": "1.0.dev",
-  "description": "My Public IP from Ipify.org",
+  "version": "1.0.0",
+  "description": "My Public IP using ipify.org",
   "keywords": [
-    "n8n-community-node-package"
+    "Network","n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "www.zubial.net",
@@ -28,7 +28,7 @@
     "format": "prettier nodes --write",
     "lint": "eslint nodes package.json",
     "prepublish": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes package.json",
-    "package": "pnpm prepublish && npm pack --pack-destination ./package/"
+    "package": "rimraf ./package/** && pnpm prepublish && npm pack --pack-destination ./package/"
   },
   "files": [
     "dist"

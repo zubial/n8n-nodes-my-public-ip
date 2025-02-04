@@ -3,9 +3,9 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeConnectionType
+	NodeConnectionType,
 } from 'n8n-workflow';
-import {IHttpRequestOptions} from "n8n-workflow/dist/Interfaces";
+import { IHttpRequestOptions } from 'n8n-workflow/dist/Interfaces';
 
 export class MyPublicIp implements INodeType {
 	description: INodeTypeDescription = {
@@ -68,7 +68,6 @@ export class MyPublicIp implements INodeType {
 						description: 'The name of the output field to put the data in',
 					},
 				],
-
 			},
 		],
 	};
@@ -78,7 +77,7 @@ export class MyPublicIp implements INodeType {
 
 		const version = this.getNodeParameter('version', 0);
 		const options = this.getNodeParameter('options', 0);
-		const result_field = (options.result_field ? options.result_field as string : 'public_ip');
+		const result_field = options.result_field ? (options.result_field as string) : 'public_ip';
 
 		let httpOptions: IHttpRequestOptions = {
 			method: 'GET',
@@ -89,13 +88,15 @@ export class MyPublicIp implements INodeType {
 			},
 		};
 
-		let response: { ip: string | number | boolean | object | null | undefined; };
+		let response: { ip: string | number | boolean | object | null | undefined };
 		if (version == 'both' || version == 'ip_v6') {
 			httpOptions.url = 'https://api6.ipify.org?format=json';
 
 			response = await this.helpers.httpRequest(httpOptions);
 			if (response.ip) {
-				items.forEach((item) => (item.json[result_field + ((version == 'both') ? '_v6':'')] = response.ip));
+				items.forEach(
+					(item) => (item.json[result_field + (version == 'both' ? '_v6' : '')] = response.ip),
+				);
 			}
 			console.log(response);
 		}
@@ -105,7 +106,9 @@ export class MyPublicIp implements INodeType {
 
 			response = await this.helpers.httpRequest(httpOptions);
 			if (response.ip) {
-				items.forEach((item) => (item.json[result_field + ((version == 'both') ? '_v4':'')] = response.ip));
+				items.forEach(
+					(item) => (item.json[result_field + (version == 'both' ? '_v4' : '')] = response.ip),
+				);
 			}
 			console.log(response);
 		}
