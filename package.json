@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-my-public-ip",
   "version": "1.0.0",
-  "description": "My Public IP using ipify.org",
+  "description": "My Public IP",
   "keywords": [
     "Network", "SecOps", "Zubial", "n8n-community-node-package"
   ],
