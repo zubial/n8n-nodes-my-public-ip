@@ -6,6 +6,7 @@ import {
 	NodeConnectionType,
 } from 'n8n-workflow';
 import { IHttpRequestOptions } from 'n8n-workflow/dist/Interfaces';
+import { MyPublicIpResult } from './models/MyPublicIpResult';
 
 export class MyPublicIp implements INodeType {
 	description: INodeTypeDescription = {
@@ -36,22 +37,22 @@ export class MyPublicIp implements INodeType {
 				required: true,
 				options: [
 					{
-						name: 'Ip V4',
-						value: 'ip_v4',
+						name: 'IP V4',
+						value: 'public_ipv4',
 						action: 'Get my public ipv4',
 					},
 					{
-						name: 'Ip V6',
-						value: 'ip_v6',
+						name: 'IP V6',
+						value: 'public_ipv6',
 						action: 'Get my public ipv6',
 					},
 					{
-						name: 'Both V4/V6',
-						value: 'both',
+						name: 'Both IP V4/V6',
+						value: 'both_ipv4/6',
 						action: 'Get my public ipv4/ipv6',
 					},
 				],
-				default: 'ip_v4',
+				default: 'public_ipv4',
 			},
 			{
 				displayName: 'Options',
@@ -64,7 +65,7 @@ export class MyPublicIp implements INodeType {
 						displayName: 'Put Result in Field',
 						name: 'result_field',
 						type: 'string',
-						default: 'public_ip',
+						default: 'public',
 						description: 'The name of the output field to put the data in',
 					},
 				],
@@ -77,7 +78,7 @@ export class MyPublicIp implements INodeType {
 
 		const version = this.getNodeParameter('version', 0);
 		const options = this.getNodeParameter('options', 0);
-		const result_field = options.result_field ? (options.result_field as string) : 'public_ip';
+		const result_field = options.result_field ? (options.result_field as string) : 'public';
 
 		let httpOptions: IHttpRequestOptions = {
 			method: 'GET',
@@ -88,30 +89,33 @@ export class MyPublicIp implements INodeType {
 			},
 		};
 
+		let result = new MyPublicIpResult();
 		let response: { ip: string | number | boolean | object | null | undefined };
-		if (version == 'both' || version == 'ip_v6') {
+		if (version == 'both_ipv4/6' || version == 'public_ipv6') {
 			httpOptions.url = 'https://api6.ipify.org?format=json';
 
 			response = await this.helpers.httpRequest(httpOptions);
 			if (response.ip) {
-				items.forEach(
-					(item) => (item.json[result_field + (version == 'both' ? '_v6' : '')] = response.ip),
-				);
+				result.interfaces.push({
+					family: 'IPv6',
+					address: response.ip as string,
+				});
 			}
-			console.log(response);
 		}
 
-		if (version == 'both' || version == 'ip_v4') {
+		if (version == 'both_ipv4/6' || version == 'public_ipv4') {
 			httpOptions.url = 'https://api.ipify.org?format=json';
 
 			response = await this.helpers.httpRequest(httpOptions);
 			if (response.ip) {
-				items.forEach(
-					(item) => (item.json[result_field + (version == 'both' ? '_v4' : '')] = response.ip),
-				);
+				result.interfaces.push({
+					family: 'IPv4',
+					address: response.ip as string,
+				});
 			}
-			console.log(response);
 		}
+
+		items.forEach((item) => (item.json[result_field] = result));
 
 		return [items];
 	}

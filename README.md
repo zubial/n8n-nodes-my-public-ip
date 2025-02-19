@@ -12,8 +12,6 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 Or manual install with `npm i n8n-nodes-my-public-ip`
 
-https://www.npmjs.com/package/n8n-nodes-my-public-ip
-
 ## Example Usage in n8n
 * Check your current public IP for network troubleshooting.
 * Trigger firewall rules based on your dynamic IP.

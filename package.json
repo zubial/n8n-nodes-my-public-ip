@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-my-public-ip",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "My Public IP",
   "keywords": [
     "Network", "SecOps", "Zubial", "n8n-community-node-package"
